@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CR-chatroom</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" as="style" href="/style.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+</head>
+<body>
+  <div id="contextMenu" class="context-menu"></div>
+
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>编辑消息</span>
+        <button class="icon-btn" onclick="closeEditMessage()" id="editCloseBtn"></button>
+      </div>
+      <textarea id="editContent" rows="5" placeholder="输入新的内容..."></textarea>
+      <label class="md-toggle">
+        <input type="checkbox" id="editMarkdown">
+        <span>启用 Markdown + LaTeX</span>
+      </label>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeEditMessage()">取消</button>
+        <button class="btn btn-solid" onclick="submitEditMessage()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container" id="appContainer">
+
+    <div class="app-topbar">
+      <div class="app-brand">
+        <span class="brand-dot" id="brandIcon"></span>
+        <span>CR-chatroom</span>
+        <span class="brand-sub" id="userInfoHeader"></span>
+      </div>
+      <div class="app-actions">
+        <a class="btn btn-primary btn-with-icon btn-link" id="adminLink" href="/admin" style="display:none;">
+          <span id="adminLinkIcon"></span><span>管理面板</span>
+        </a>
+        <div id="topThemeHolder"></div>
+        <button class="btn btn-solid btn-with-icon" onclick="logout()">
+          <span id="logoutBtnIcon"></span><span>退出登录</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <aside class="panel panel-users">
+        <div class="panel-header">
+          <span class="panel-title"><span id="userTitleIcon"></span><span>用户列表</span></span>
+          <div id="userHeaderBtns">
+            <button class="btn btn-primary" id="btnBatchUser" onclick="toggleBatchMode('user', true)">批量</button>
+            <span id="userBatchActions" style="display: none;">
+              <button class="btn btn-warning" onclick="batchUserAction('ban')">封禁</button>
+              <button class="btn btn-success" onclick="batchUserAction('unban')">解封</button>
+              <button class="btn btn-danger" onclick="batchUserAction('delete')">删除</button>
+              <button class="btn btn-success" onclick="toggleBatchMode('user', false)">完成</button>
+            </span>
+          </div>
+        </div>
+        <div class="panel-body"><div id="userList"></div></div>
+      </aside>
+
+      <section class="panel panel-chat">
+        <div class="panel-header">
+          <span class="panel-title"><span id="chatTitleIcon"></span><span>聊天</span></span>
+          <div id="chatHeaderBtns">
+            <button class="btn btn-primary" id="btnBatchMsg" onclick="toggleBatchMode('msg', true)">批量</button>
+            <span id="msgBatchActions" style="display: none;">
+              <button class="btn btn-danger" onclick="deleteSelectedMessages()">删除选中</button>
+              <button class="btn btn-success" onclick="toggleBatchMode('msg', false)">完成</button>
+            </span>
+          </div>
+        </div>
+
+        <div class="panel-body chat-body" id="chatList">
+          <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+            <button class="btn btn-primary" id="loadMoreBtn" onclick="loadMoreMessages()">加载前一天</button>
+            <div class="load-more-tip" id="loadMoreTip" style="display:none;">没有更多了</div>
+          </div>
+          <div class="chat-messages" id="messageContainer"></div>
+          <div class="chat-empty" id="chatEmpty" style="display:none;">暂无消息</div>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="input-row">
+            <textarea id="msgInput" rows="1"
+              placeholder="输入聊天内容...（Enter 发送，Shift+Enter 换行）"
+              oninput="autoGrow(this)" onkeydown="handleInputKey(event)"></textarea>
+            <button class="btn btn-solid btn-with-icon" onclick="sendText()">
+              <span id="sendBtnIcon"></span><span>发送</span>
+            </button>
+          </div>
+          <div class="input-row input-row-file">
+            <label class="md-toggle">
+              <input type="checkbox" id="mdToggle">
+              <span>启用 Markdown + LaTeX</span>
+            </label>
+            <span class="spacer"></span>
+            <input type="file" id="fileInput">
+            <button class="btn btn-success btn-with-icon" onclick="uploadFile()">
+              <span id="fileBtnIcon"></span><span>上传文件</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="/vendor/marked.min.js" defer></script>
+  <script src="/vendor/purify.min.js" defer></script>
+  <script src="/vendor/katex/katex.min.js" defer></script>
+  <script src="/vendor/katex/mhchem.min.js" defer></script>
+
+  <script src="/js/icons.js" defer></script>
+  <script src="/js/common.js" defer></script>
+  <script src="/js/markdown.js" defer></script>
+  <script src="/js/chatroom.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('topThemeHolder').innerHTML = themeToggleHtml();
+      document.getElementById('editCloseBtn').innerHTML = icon('close', 14);
+      bootstrapChatroom();
+    });
+  </script>
+</body>
+</html>

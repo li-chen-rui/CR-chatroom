@@ -1,0 +1,168 @@
+/* 登录 / 注册页专用样式 */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.auth-theme-corner {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+}
+
+.auth-box {
+  background: var(--surface-solid);
+  color: var(--text);
+  padding: 36px 32px 28px;
+  border-radius: var(--radius-md);
+  width: 380px;
+  max-width: 92vw;
+  box-shadow: var(--shadow-flyout);
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 无顶部渐变线 */
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.auth-brand-mark {
+  width: 34px; height: 34px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--accent), #6cb8ff);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,120,212,0.35);
+}
+.auth-brand-text {
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+}
+
+.auth-box h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* ---- 通用输入框 ---- */
+.auth-box input {
+  display: block;
+  width: 100%;
+  padding: 11px 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.auth-box input::placeholder { color: var(--text-tertiary); }
+.auth-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* ---- 密码框容器：撑开高度 ---- */
+.password-field {
+  position: relative;
+  margin-bottom: 12px;
+}
+.password-field input {
+  margin-bottom: 0;
+  padding-right: 44px; /* 给右侧眼睛按钮留空间 */
+}
+
+/* ---- 眼睛按钮：只在 .password-field 内生效，覆盖全局 button 样式 ---- */
+.password-field .password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 1;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.password-field .password-toggle:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.password-field .password-toggle:active {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.password-field .password-toggle.is-visible {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+/* 隐藏浏览器自带的密码显隐图标 */
+.password-field input::-ms-reveal,
+.password-field input::-ms-clear {
+  display: none;
+}
+.password-field input::-webkit-credentials-auto-fill-button,
+.password-field input::-webkit-textfield-decoration-container {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ---- 主按钮：仅 #authBtn，避免命中眼睛按钮 ---- */
+#authBtn {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  margin-top: 8px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.06s ease;
+}
+#authBtn:hover { background: var(--accent-hover); }
+#authBtn:active { background: var(--accent-pressed); transform: scale(0.99); }
+#authBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-error {
+  min-height: 18px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--danger);
+  text-align: center;
+}
+.auth-toggle {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  user-select: none;
+}
+.auth-toggle:hover { text-decoration: underline; }

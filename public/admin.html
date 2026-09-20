@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理面板 - CR-chatroom</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="contextMenu" class="context-menu"></div>
+
+  <div class="app-container admin-container" id="adminContainer">
+    <div class="app-topbar">
+      <div class="app-brand">
+        <span class="brand-dot" id="brandIcon"></span>
+        <span>CR-chatroom · 管理面板</span>
+        <span class="brand-sub" id="userInfoHeader"></span>
+      </div>
+      <div class="app-actions">
+        <a class="btn btn-primary btn-with-icon btn-link" href="/chatroom">
+          <span id="backIcon"></span><span>返回聊天</span>
+        </a>
+        <div id="topThemeHolder"></div>
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <button class="side-item active" data-tab="users" onclick="switchTab('users')">
+          <span id="sideUsersIcon"></span><span>用户管理</span>
+        </button>
+        <button class="side-item" data-tab="limits" onclick="switchTab('limits')">
+          <span id="sideLimitsIcon"></span><span>限速设置</span>
+        </button>
+        <button class="side-item" data-tab="uploads" onclick="switchTab('uploads')">
+          <span id="sideUploadsIcon"></span><span>上传进程</span>
+        </button>
+        <button class="side-item" data-tab="chat" onclick="switchTab('chat')">
+          <span id="sideChatIcon"></span><span>聊天管理</span>
+        </button>
+      </aside>
+
+      <main class="admin-content">
+        <!-- 用户管理 -->
+        <section class="tab-panel" id="tab-users">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title"><span id="uIcon"></span><span>用户管理</span></span>
+              <div>
+                <button class="btn btn-primary" id="btnBatchUser" onclick="toggleUserBatch(true)">批量</button>
+                <span id="userBatchActions" style="display:none;">
+                  <button class="btn btn-warning" onclick="batchUserAction('ban')">封禁</button>
+                  <button class="btn btn-success" onclick="batchUserAction('unban')">解封</button>
+                  <button class="btn btn-danger" onclick="batchUserAction('delete')">删除</button>
+                  <button class="btn btn-success" onclick="toggleUserBatch(false)">完成</button>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body"><div id="adminUserList"></div></div>
+          </div>
+        </section>
+
+        <!-- 限速设置 -->
+        <section class="tab-panel" id="tab-limits" style="display:none;">
+          <div class="panel">
+            <div class="panel-header"><span class="panel-title"><span id="sIcon"></span><span>限速与文件限制</span></span></div>
+            <div class="panel-body">
+              <div class="speed-form">
+                <label>同时上传进程数限制:
+                  <input type="number" id="cfgMaxUploads" min="1" value="1">
+                </label>
+                <label>最大上传速度 (MB/s):
+                  <input type="number" id="cfgMaxSpeed" min="0.1" step="0.5" value="2">
+                </label>
+                <label>最大单个文件限制 (MB):
+                  <input type="number" id="cfgMaxFileSize" min="1" step="1" value="100">
+                </label>
+                <button class="btn btn-solid" onclick="saveSettings()">保存配置</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 上传进程（新增批量） -->
+        <section class="tab-panel" id="tab-uploads" style="display:none;">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title"><span id="pIcon"></span><span>上传进程管理</span></span>
+              <div>
+                <button class="btn btn-primary" id="btnBatchProc" onclick="toggleProcBatch(true)">批量</button>
+                <span id="procBatchActions" style="display:none;">
+                  <button class="btn btn-danger" onclick="batchCancelUploads()">终止选中</button>
+                  <button class="btn btn-success" onclick="toggleProcBatch(false)">完成</button>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body"><div id="adminUploads"></div></div>
+          </div>
+        </section>
+
+        <!-- 聊天管理（时间范围 + 关键字 + 手动删除） -->
+        <section class="tab-panel" id="tab-chat" style="display:none;">
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title"><span id="cIcon"></span><span>聊天管理</span></span>
+              <div>
+                <button class="btn btn-primary" id="btnBatchChat" onclick="toggleChatBatch(true)">批量</button>
+                <span id="chatBatchActions" style="display:none;">
+                  <button class="btn btn-danger" onclick="batchDeleteSelected()">删除选中</button>
+                  <button class="btn btn-danger" onclick="deleteAllFiltered()">清空筛选</button>
+                  <button class="btn btn-success" onclick="toggleChatBatch(false)">完成</button>
+                </span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <!-- 时间段 -->
+              <div class="chat-del-form">
+                <div class="setting-group-title">按时间段筛选</div>
+                <label class="radio-line">
+                  <input type="radio" name="delMode" value="before" checked onchange="onDelModeChange()">
+                  <span>以下时间<b>以前</b>：</span>
+                  <input type="datetime-local" id="delBefore">
+                </label>
+                <label class="radio-line">
+                  <input type="radio" name="delMode" value="after" onchange="onDelModeChange()">
+                  <span>以下时间<b>以后</b>：</span>
+                  <input type="datetime-local" id="delAfter">
+                </label>
+                <label class="radio-line">
+                  <input type="radio" name="delMode" value="range" onchange="onDelModeChange()">
+                  <span><b>区间</b>：</span>
+                  <input type="datetime-local" id="delFrom">
+                  <span>到</span>
+                  <input type="datetime-local" id="delTo">
+                </label>
+
+                <div class="setting-group-title" style="margin-top:8px;">关键字筛选</div>
+                <input type="text" id="chatKeyword" class="chat-keyword" placeholder="按内容/用户名搜索...">
+
+                <div class="chat-del-actions">
+                  <button class="btn btn-primary" onclick="queryMessages()">查询</button>
+                  <button class="btn btn-danger" onclick="deleteAllFiltered()">删除全部筛选结果</button>
+                </div>
+              </div>
+
+              <div id="chatResult" class="chat-result"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/icons.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/admin.js"></script>
+  <script>
+    document.getElementById('topThemeHolder').innerHTML = themeToggleHtml();
+    bootstrapAdmin();
+  </script>
+</body>
+</html>

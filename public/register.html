@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册 - CR-chatroom</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/auth.css">
+</head>
+<body class="auth-page">
+  <div class="auth-theme-corner" id="authThemeCorner"></div>
+  <div class="auth-box">
+    <div class="auth-brand">
+      <span class="auth-brand-mark" id="authBrandMark"></span>
+      <span class="auth-brand-text">CR-chatroom</span>
+    </div>
+    <h2>注册</h2>
+    <input type="text" id="username" placeholder="账号" autocomplete="username">
+    <div class="password-field">
+      <input type="password" id="password" placeholder="密码" autocomplete="new-password">
+      <button type="button" class="password-toggle" id="passwordToggle" aria-label="显示密码"></button>
+    </div>
+    <input type="text" id="inviteCode" placeholder="邀请码" autocomplete="off"
+           onkeydown="if(event.key==='Enter')handleRegister()">
+    <button id="authBtn" onclick="handleRegister()">注册并登录</button>
+    <div class="auth-error" id="authError"></div>
+    <div class="auth-toggle" onclick="location.href='/login'">已有账号？点击登录</div>
+  </div>
+
+  <script src="/js/icons.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    initTheme();
+    document.getElementById('authThemeCorner').innerHTML = themeToggleHtml();
+    document.getElementById('authBrandMark').innerHTML = icon('chat', 18);
+    document.getElementById('passwordToggle').innerHTML = icon('eye', 16);
+    checkAlreadyLoggedIn();
+  </script>
+</body>
+</html>
